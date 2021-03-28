@@ -79,6 +79,5 @@ def get_files(name):
     return files
     
 if __name__ == '__main__':
-    # print(PWD)
-    # get_files("cancer_data")
-    login(creds)
+    print(PWD)
+    get_files("cancer_data")
