@@ -1,7 +1,7 @@
 from zipfile import ZipFile
 import os
 import shutil
-from shutil import copyfile
+from distutils.dir_util import copy_tree
 
 PWD = str(os.path.dirname(os.path.abspath(__file__))).replace("/scripts","/raw_data")
 
@@ -60,25 +60,18 @@ def divide(name,path,parts):
 
     count=0
 
+    dest_directory = f"{DIVIDE}{name}"
+
     for divide in divided_dirs:
+        os.makedirs(dest_directory)
         divided_file_paths = []
         count+=1
         for folder in divide:
-            directory = f"{path}{folder}"
-            file_paths = get_all_file_paths(directory)
-            divided_file_paths.extend(file_paths)
-        print('\nFollowing files will be zipped:')
-        for file_name in file_paths:
-            print(file_name)
-
-        with ZipFile(f'{DIVIDE}{name}_{count}.zip','w') as zip:
-            for file in divided_file_paths:
-                zip.write(file)
-
-        for folder in divide:
-            directory = f"{path}{folder}"
-            print(f"\n\n {directory} removed !")
-            shutil.rmtree(directory)
+            src_directory = f"{path}{folder}"           
+            copy_tree(src_directory, dest_directory)
+        shutil.make_archive(f"{DIVIDE}{name}_{count}", 'zip', dest_directory)
+        print(f"\n\n {dest_directory} removed !")
+        shutil.rmtree(dest_directory)
 
 if __name__ == "__main__":
     make_dir()
