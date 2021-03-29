@@ -94,10 +94,10 @@ def get_nii_files(extracted_paths):
 def get_data(name):
     make_dir()
     nii_files=[]
-    files=get_files(name)
+    files=get_files(name)[:2]
+    print(files)
     for file in files:
       downloaded_files=download_data([file])
-      time.sleep(5)
       extracted_paths=extract_files(downloaded_files)
       print(f"\n\nREMOVE: {downloaded_files[0]['path']}\n")
       os.remove(downloaded_files[0]['path'])
@@ -106,4 +106,4 @@ def get_data(name):
 
 if __name__ == "__main__":
     print(PWD)
-    get_data("adni_data")
+    get_data("preprocessed_adni")

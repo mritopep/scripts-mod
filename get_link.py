@@ -42,7 +42,7 @@ def match_file_name(file_name,data_name):
         return True
     if(file_name.find("CAN")!=-1 and data_name=="cancer_data" and file_name.find("_META")==-1):
         return True   
-    if(file_name.find("preprocessed_adni")!=-1 and data_name=="adni_preprocessed"):
+    if(file_name.find("preprocessed_adni")!=-1 and data_name=="preprocessed_adni"):
         return True 
     if(file_name.find("preprocessed_cancer")!=-1 and data_name=="cancer_preprocessed"):
         return True
@@ -63,6 +63,7 @@ def get_id(creds,name):
             break
     if items:
         for item in items:
+            # print(item['name'])
             if(match_file_name(item['name'],name)):
                 print(f"Name: {item['name']}\t Id: {item['id']}")
                 files.append(item)
@@ -80,4 +81,4 @@ def get_files(name):
     
 if __name__ == '__main__':
     print(PWD)
-    get_files("cancer_data")
+    get_files("preprocessed_adni")
