@@ -20,6 +20,10 @@ SKULL_STRIP=f'{PWD}/temp/skull_strip/output'
 PREPROCESSED=str(os.path.dirname(os.path.abspath(__file__))).replace("/scripts","/preprocessed_data")
 OUTPUT=f'{PWD}/data/output/'
 
+#globals
+sub_scan={}
+
+
 def store_data(name,data):
     with open(f'{OUTPUT}{name}', 'wb') as f:
         pickle.dump(data, f) 
@@ -59,21 +63,39 @@ def bias_correction(input_image,output_image):
 def petpvc(input_image,output_image):
     os.system(f"petpvc -i {input_image} -o {output_image}")
 
-# def make_dir(file_data):
-#   sub_id,mod=get_id_and_mod(file_data["name"])
-#   loc=ADNI+sub_id+"/"+mod
-#   if(path.isdir(loc)==False):
-#     try:  
-#       os.makedirs(loc) 
-#     except OSError as error:  
-#         print(error) 
-#   move(file_data["path"], loc+"/"+file_data["name"])
-#   print(f"File Name: {file_data['name']}\n Loc: {loc}/{file_data['name']}")
+def preprocess(k):
+    make_folder(f"{PREPROCESSED}/{k}")
+    print(k)
 
-def preprocess(name):
-    make_dir()
-    files=get_file_data(name)
-    store_data("nii",files)
+
+
+
+def make_folder(name):
+  try:
+    os.makedirs(name)
+  except:
+    pass
+
+def get_folder_name(path):
+  return path.split("/")[-2]
+
+def driver(name):
+    # make_dir()
+    # files=get_file_data(name)
+    # store_data("nii",files)
+    data=get_data("nii")
+    for i in data:
+      folder = get_folder_name(i['path'])
+      if(folder not in sub_scan.keys()):
+        sub_scan[folder]={}
+        sub_scan[folder].update({i['name']:i['path']})
+      else:
+        sub_scan[folder].update({i['name']:i['path']})
+    for k,v in sub_scan.items():
+      print(k,v)
+    store_data("dic",sub_scan)
+    for k in sub_scan:
+        preprocess(k)
     # print("MAKING STRUCTRE")
     # for f in files:
     #     make_dir(f)
@@ -83,6 +105,5 @@ def preprocess(name):
     # remove_dir()
 
 if __name__ == "__main__":
-    # preprocess("preprocessed_adni")
-    data=get_data("nii")
-    print(data)
+    driver("preprocessed_adni")
+    

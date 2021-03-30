@@ -42,9 +42,9 @@ def match_file_name(file_name,data_name):
         return True
     if(file_name.find("CAN")!=-1 and data_name=="cancer_data" and file_name.find("_META")==-1):
         return True   
-    if(file_name.find("preprocessed_adni")!=-1 and data_name=="preprocessed_adni"):
+    if(file_name.find("filtered_adni")!=-1 and data_name=="filtered_adni"):
         return True 
-    if(file_name.find("preprocessed_cancer")!=-1 and data_name=="cancer_preprocessed"):
+    if(file_name.find("filtered_cancer")!=-1 and data_name=="filtered_cancer"):
         return True
     return False
 
