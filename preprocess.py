@@ -2,7 +2,6 @@ import os
 from datetime import date
 from shutil import copyfile
 import shutil
-import gzip
 import pickle
 
 #import
@@ -45,18 +44,13 @@ def remove_dir():
         except:
             pass
 
-def unzip_scan():
-    with gzip.open(f"{SKULL_STRIP}/it_mri_masked.nii.gz", 'rb') as f_in:
-        with open(f'{SKULL_STRIP}/sk_mri.nii', 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
-
 def image_registration(pet_image,mri_image):
     os.system(f"image_reg.py {mri_image} {pet_image}")
 
 def intensity_normalization(input_image,output_image):
     os.system(f"denoise -i {input_image}  -o {output_image}")
 
-def skull_strip(input_image):
+def skull_strip(input_image,output_image):
     os.system(f"skull_strip.py -i {input_image} -o output {SKULL_STRIP}")
 
 def bias_correction(input_image,output_image):
@@ -65,7 +59,7 @@ def bias_correction(input_image,output_image):
 def petpvc(input_image,output_image):
     os.system(f"petpvc -i {input_image} -o {output_image}")
 
-# def make_preprocessed_dir(file_data):
+# def make_dir(file_data):
 #   sub_id,mod=get_id_and_mod(file_data["name"])
 #   loc=ADNI+sub_id+"/"+mod
 #   if(path.isdir(loc)==False):
@@ -76,20 +70,11 @@ def petpvc(input_image,output_image):
 #   move(file_data["path"], loc+"/"+file_data["name"])
 #   print(f"File Name: {file_data['name']}\n Loc: {loc}/{file_data['name']}")
 
-def preprocess_mri(mri_scan):
-    intensity_normalization(mri_scan,f"{OUTPUT}it_mri.nii")
-    skull_strip(f"{OUTPUT}it_mri.nii")
-    unzip_scan()
-    bias_correction(f"{SKULL_STRIP}/sk_mri.nii",f"{OUTPUT}preprocessed_mri.nii")
-
-def preprocess_pet(pet_scan):
-    image_registration()
-
 def preprocess(name):
     make_dir()
     files=get_file_data(name)
     store_data("nii",files)
-     # print("MAKING STRUCTRE")
+    # print("MAKING STRUCTRE")
     # for f in files:
     #     make_dir(f)
     # shutil.rmtree(EXTRACT) 
@@ -98,4 +83,6 @@ def preprocess(name):
     # remove_dir()
 
 if __name__ == "__main__":
-    preprocess("preprocessed_adni")
+    # preprocess("preprocessed_adni")
+    data=get_data("nii")
+    print(data)
