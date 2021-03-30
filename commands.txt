@@ -1,2 +1,3 @@
 git clone https://github.com/mritopep/scripts-mod.git scripts
 git clone https://github.com/mritopep/tokens.git tokens
+python get_preprocessed_data.py
