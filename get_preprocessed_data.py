@@ -4,9 +4,12 @@ import zipfile
 import os
 import shutil
 import time
+import gzip
 
 # library files
 from get_link import get_files
+from library import make_dir,get_data,store_data,remove_dir
+from preprocess import driver
 
 PWD = str(os.path.dirname(os.path.abspath(__file__))).replace("/scripts","/raw_data")
 
@@ -15,7 +18,9 @@ DOWNLOAD=f'{PWD}/downloads/'
 ADNI=f'{PWD}/data/adni/'
 CANCER=f'{PWD}/data/cancer/'
 EXTRACT=f'{PWD}/extracts/'
-
+METADATA_ADNI=f'{PWD}/metadata/adni/'
+METADATA_CANCER=f'{PWD}/metadata/cancer/'
+PREPROCESSED=str(os.path.dirname(os.path.abspath(__file__))).replace("/scripts","/preprocessed_data")
 
 def download_file_from_google_drive(id, destination):
     URL = "https://docs.google.com/uc?export=download"
@@ -50,14 +55,6 @@ def extract(source,destination):
             except:
                 print(f"Bad File: {file.filename}")
 
-def make_dir():
-    dirs=[DOWNLOAD,EXTRACT,ADNI,CANCER]
-    for dir in dirs:
-        try:
-            os.makedirs(dir)  
-        except:
-            pass
-
 def download_data(files):
     downloaded_files=[]
     print("\n DOWNLOADING FILES \n")
@@ -80,17 +77,27 @@ def extract_files(downloaded_files):
     return extract_paths
 
 def get_data(name):
-    make_dir()
+    make_dir([DOWNLOAD,EXTRACT,ADNI,CANCER,METADATA_ADNI,METADATA_CANCER,PREPROCESSED])
     nii_files=[]
-    files=get_files(name)[:2]
+    files=get_files(name)[0]
     print(files)
     for file in files:
       downloaded_files=download_data([file])
       extracted_paths=extract_files(downloaded_files)
+
       print(f"\n\nREMOVE: {downloaded_files[0]['path']}\n")
       os.remove(downloaded_files[0]['path'])
+
+      driver(extracted_paths)
+
+      name = file.replace("filtered","preprocessed")[:-4]
+      shutil.make_archive(name, 'zip', PREPROCESSED)
+      print(f"\n\nremoved !")
+      shutil.rmtree(PREPROCESSED)
+
+      make_dir([PREPROCESSED])
     return extracted_paths
 
 if __name__ == "__main__":
     print(PWD)
-    get_data("preprocessed_adni")
+    get_data("filtered_adni")
