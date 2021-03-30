@@ -60,18 +60,22 @@ def divide(name,path,parts):
 
     count=0
 
-    dest_directory = f"{DIVIDE}{name}"
-
     for divide in divided_dirs:
-        os.makedirs(dest_directory)
+        try:
+            os.makedirs(f"{DIVIDE}{name}")
+        except:
+            pass
         divided_file_paths = []
         count+=1
         for folder in divide:
-            src_directory = f"{path}{folder}"           
-            copy_tree(src_directory, dest_directory)
-        shutil.make_archive(f"{DIVIDE}{name}_{count}", 'zip', dest_directory)
-        print(f"\n\n {dest_directory} removed !")
-        shutil.rmtree(dest_directory)
+            dest_directory = f"{DIVIDE}{name}/{folder}"
+            src_directory = f"{path}{folder}"   
+            os.makedirs(dest_directory)       
+            shutil.copyfile(f"{src_directory}/mri.nii",f"{dest_directory}/mri.nii")
+            shutil.copyfile(f"{src_directory}/pet.nii",f"{dest_directory}/pet.nii")
+        shutil.make_archive(f"{DIVIDE}{name}_{count}", 'zip', f"{DIVIDE}{name}")
+        print(f"\n\nremoved !")
+        shutil.rmtree(f"{DIVIDE}{name}")
 
 if __name__ == "__main__":
     make_dir()
