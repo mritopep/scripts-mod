@@ -76,19 +76,31 @@ def extract_files(downloaded_files):
       extract_paths.append(extract_path)
     return extract_paths
 
+def get_nii_files(extracted_paths):
+    print("\n SELECTING SCANS FILES \n")
+    nii_files=[]
+    for extract_path in extracted_paths:
+      for r, d, f in os.walk(extract_path):
+          for file in f:
+              if file.endswith(".nii"):
+                file_name=file
+                file_path=os.path.join(r, file)
+                nii_files.append({"name":file_name,"path":file_path})
+    return nii_files
+
 def get_data(name):
     make_dir([DOWNLOAD,EXTRACT,ADNI,CANCER,METADATA_ADNI,METADATA_CANCER,PREPROCESSED])
     nii_files=[]
-    files=get_files(name)[0]
+    files=get_files(name)[:2]
     print(files)
     for file in files:
       downloaded_files=download_data([file])
       extracted_paths=extract_files(downloaded_files)
-
+      extracted_files=get_nii_files(extracted_paths)
       print(f"\n\nREMOVE: {downloaded_files[0]['path']}\n")
       os.remove(downloaded_files[0]['path'])
 
-      driver(extracted_paths)
+      driver(extracted_files)
 
       name = file.replace("filtered","preprocessed")[:-4]
       shutil.make_archive(name, 'zip', PREPROCESSED)
