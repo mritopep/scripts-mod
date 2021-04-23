@@ -94,7 +94,7 @@ def get_nii_files(extracted_paths):
 def get_data(name):
     make_dir()
     nii_files=[]
-    files=get_files(name)[0]
+    files=get_files(name)
     print(files)
     for file in files:
       downloaded_files=download_data([file])
